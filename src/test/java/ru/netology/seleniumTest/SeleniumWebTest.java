@@ -135,4 +135,27 @@ public class SeleniumWebTest {
         assertEquals("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.",
                 result.trim());
     }
+
+    @Test
+    public void testValidFormNameSpecialSimbol() {
+        // тут адрес SUT, который крутится локально
+        driver.get("http://localhost:9999");
+        // Вводим валидные данные в поле ФИО
+        driver.findElement(By.cssSelector("[data-test-id='name'] input"))
+                .sendKeys("Иванов Фёдор");
+        // Вводим валидный номер телефона 11 цифр
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input"))
+                .sendKeys("+71234567890");
+        // Ставил галочку в CheckBox Согласие
+        driver.findElement(By.cssSelector("[data-test-id='agreement'] .checkbox__box"))
+                .click();
+        // Нажимаем кнопку отправить
+        driver.findElement(By.cssSelector("button.button_view_extra"))
+                .click();
+        String result = driver.findElement(By.cssSelector("[data-test-id='order-success']"))
+                .getText();
+        assertEquals("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.",
+                result.trim());
+    }
+
 }
