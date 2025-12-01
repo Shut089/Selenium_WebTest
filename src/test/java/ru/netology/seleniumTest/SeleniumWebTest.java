@@ -7,9 +7,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
 
 public class SeleniumWebTest {
 
@@ -29,6 +33,8 @@ public class SeleniumWebTest {
         options.addArguments("--headless");
 
         driver = new ChromeDriver(options);
+        // тут адрес SUT, который крутится локально
+        driver.get("http://localhost:9999");
     }
 
     @AfterEach
@@ -40,8 +46,6 @@ public class SeleniumWebTest {
 
     @Test
     public void testValidForm() {
-        // тут адрес SUT, который крутится локально
-        driver.get("http://localhost:9999");
         // Вводим валидные данные в поле ФИО
         driver.findElement(By.cssSelector("[data-test-id='name'] input"))
                 .sendKeys("Иванов Иван");
@@ -62,14 +66,15 @@ public class SeleniumWebTest {
 
     @Test
     public void testInvalidFormName() {
-        // тут адрес SUT, который крутится локально
-        driver.get("http://localhost:9999");
         // Пустое поле ФИО
         driver.findElement(By.cssSelector("[data-test-id='name'] input"))
                 .sendKeys("");
         // Пустой номер телефона
         driver.findElement(By.cssSelector("[data-test-id='phone'] input"))
                 .sendKeys("");
+        // Ставил галочку в CheckBox Согласие
+        driver.findElement(By.cssSelector("[data-test-id='agreement'] .checkbox__box"))
+                .click();
         // Нажимаем кнопку отправить
         driver.findElement(By.cssSelector("button.button_view_extra"))
                 .click();
@@ -81,14 +86,15 @@ public class SeleniumWebTest {
 
     @Test
     public void testInvalidFormPhone() {
-        // тут адрес SUT, который крутится локально
-        driver.get("http://localhost:9999");
         // Валидное ФИО
         driver.findElement(By.cssSelector("[data-test-id='name'] input"))
                 .sendKeys("Иванов Иван");
         // Пустой номер телефона
         driver.findElement(By.cssSelector("[data-test-id='phone'] input"))
                 .sendKeys("");
+        // Ставил галочку в CheckBox Согласие
+        driver.findElement(By.cssSelector("[data-test-id='agreement'] .checkbox__box"))
+                .click();
         // Нажимаем кнопку отправить
         driver.findElement(By.cssSelector("button.button_view_extra"))
                 .click();
@@ -100,14 +106,15 @@ public class SeleniumWebTest {
 
     @Test
     public void testInvalidFormNameEN() {
-        // тут адрес SUT, который крутится локально
-        driver.get("http://localhost:9999");
         // Невалидное поле ФИО
         driver.findElement(By.cssSelector("[data-test-id='name'] input"))
                 .sendKeys("Ivanov Ivan");
         // Пустой номер телефона
         driver.findElement(By.cssSelector("[data-test-id='phone'] input"))
                 .sendKeys("");
+        // Ставил галочку в CheckBox Согласие
+        driver.findElement(By.cssSelector("[data-test-id='agreement'] .checkbox__box"))
+                .click();
         // Нажимаем кнопку отправить
         driver.findElement(By.cssSelector("button.button_view_extra"))
                 .click();
@@ -119,14 +126,15 @@ public class SeleniumWebTest {
 
     @Test
     public void testInvalidFormPhoneStart8() {
-        // тут адрес SUT, который крутится локально
-        driver.get("http://localhost:9999");
         // Валидное поле ФИО
         driver.findElement(By.cssSelector("[data-test-id='name'] input"))
                 .sendKeys("Иванов Иван");
         // Невалидный номер телефона
         driver.findElement(By.cssSelector("[data-test-id='phone'] input"))
                 .sendKeys("81234567890");
+        // Ставил галочку в CheckBox Согласие
+        driver.findElement(By.cssSelector("[data-test-id='agreement'] .checkbox__box"))
+                .click();
         // Нажимаем кнопку отправить
         driver.findElement(By.cssSelector("button.button_view_extra"))
                 .click();
@@ -138,8 +146,6 @@ public class SeleniumWebTest {
 
     @Test
     public void testValidFormNameSpecialSimbol() {
-        // тут адрес SUT, который крутится локально
-        driver.get("http://localhost:9999");
         // Вводим валидные данные в поле ФИО
         driver.findElement(By.cssSelector("[data-test-id='name'] input"))
                 .sendKeys("Иванов Фёдор");
@@ -157,5 +163,27 @@ public class SeleniumWebTest {
         assertEquals("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.",
                 result.trim());
     }
+
+    @Test
+    public void testCheckboxTextTurnsRedWhenNotChecked() {
+        // Заполняем обязательные поля
+        driver.findElement(By.cssSelector("[data-test-id='name'] input"))
+                .sendKeys("Иванов Иван");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input"))
+                .sendKeys("+71234567890");
+
+        // Чекбокс специально НЕ нажимаем
+        // Нажимаем кнопку отправки
+        driver.findElement(By.cssSelector("button.button_view_extra")).click();
+
+        // Находим текст чекбокса
+        WebElement text = driver.findElement(
+                By.cssSelector("label[data-test-id='agreement'] .checkbox__text"));
+        // Считываем цвет после валидации
+        String color = text.getCssValue("color");
+        // Ожидаемый цвет RGBA:
+        assertEquals("rgba(255, 92, 92, 1)", color);
+    }
+
 
 }
