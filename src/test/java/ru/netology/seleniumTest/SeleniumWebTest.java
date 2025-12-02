@@ -11,6 +11,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import static java.awt.SystemColor.text;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -165,7 +166,7 @@ public class SeleniumWebTest {
     }
 
     @Test
-    public void testCheckboxTextTurnsRedWhenNotChecked() {
+    public void testCheckboxNotChecked() {
         // Заполняем обязательные поля
         driver.findElement(By.cssSelector("[data-test-id='name'] input"))
                 .sendKeys("Иванов Иван");
@@ -177,12 +178,10 @@ public class SeleniumWebTest {
         driver.findElement(By.cssSelector("button.button_view_extra")).click();
 
         // Находим текст чекбокса
-        WebElement text = driver.findElement(
-                By.cssSelector("label[data-test-id='agreement'] .checkbox__text"));
-        // Считываем цвет после валидации
-        String color = text.getCssValue("color");
+        WebElement invalidCheckbox = driver.findElement(
+                By.cssSelector("label.input_invalid[data-test-id='agreement']"));
         // Ожидаемый цвет RGBA:
-        assertEquals("rgba(255, 92, 92, 1)", color);
+        assertEquals(invalidCheckbox.isDisplayed(), true);
     }
 
 
